@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ja"> <!-- HTML文書の言語を日本語に設定 -->
+
+<head>
+    <meta charset="UTF-8"> <!-- 文字エンコーディングをUTF-8に設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>予約フォーム</title> <!-- タイトルを「予約フォーム」に設定 -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+            padding-top: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .label {
+            display: block;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-weight: bold;
+            background-color: #ff8ca7;
+            color: white;
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 5px;
+            /* 上に余白を追加 */
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .priority-buttons,
+        .demand-buttons,
+        .chance-buttons,
+        .Introduction-buttons,
+        .delivery-buttons,
+        .budgety-buttons,
+        .menu-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .priority-buttons button,
+        .demand-buttons button,
+        .chance-buttons button,
+        .Introduction-buttons button,
+        .delivery-buttons button,
+        .budgety-buttons button,
+        .menu-buttons button {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f7f7f7;
+            cursor: pointer;
+            box-sizing: border-box;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .priority-buttons button.active,
+        .demand-buttons button.active,
+        .chance-buttons button.active,
+        .Introduction-buttons button.active,
+        .delivery-buttons button.active,
+        .budgety-buttons button.active,
+        .menu-buttons button.active {
+            background-color: #444;
+            color: #fff;
+        }
+
+        .date-inputs input[type="datetime-local"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #ff8ca7;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .menu-section {
+            display: none;
+        }
+
+        .menu-section.active {
+            display: block;
+        }
+
+        .current-month {
+            font-size: 16px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .menu-section {
+            display: none;
+        }
+
+        .menu-section.active {
+            display: block;
+        }
+
+        #repairLabel,
+        #repairButtons {
+            display: none;
+        }
+
+        .highlight-background {
+            background-color: #f9f9d6;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            margin-top: 10px;
+            /* 上に余白を追加 */
+        }
+
+        .datetime-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 16px;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        /* 基本スタイル */
+        .info-text {
+            margin: 20px 0;
+            font-family: "Noto Sans JP", "Roboto", sans-serif;
+            font-size: 14px;
+            color: #333;
+            /* 読みやすい濃い文字色 */
+            background-color: #f8f9fa;
+            line-height: 1.8;
+            text-align: left;
+            word-wrap: break-word;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            max-width: 800px;
+            /* 横幅制限 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* 軽い影を追加 */
+            overflow-y: auto;
+            /* 長文スクロール対応 */
+        }
+
+        /* 見出しスタイル */
+        .info-text h1 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .info-text h2 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+
+        /* 強調テキスト */
+        .info-text strong {
+            color: #007bff;
+        }
+
+        /* モバイル向け調整 */
+        @media (max-width: 768px) {
+            .info-text {
+                font-size: 13px;
+                padding: 15px;
+                max-width: 100%;
+            }
+
+            .info-text h1 {
+                font-size: 16px;
+            }
+
+            .info-text h2 {
+                font-size: 14px;
+            }
+        }
+
+        .info-textmemo {
+            margin-top: 20px;
+            /* 上の余白 */
+            margin-bottom: 10px;
+            /* 下に白い隙間を追加 */
+            font-size: 13px;
+            color: #000000;
+            line-height: 1.5;
+            text-align: center;
+            word-wrap: break-word;
+            background-color: #eef9f5;
+            /* 青っぽい背景色を追加 */
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        /* 携帯端末向けのレスポンシブデザイン */
+        @media (max-width: 768px) {
+            .info-textmemo {
+                font-size: 11.5px;
+                /* スマホでは少し小さく */
+                margin-top: 10px;
+                /* 上下のマージンを調整 */
+                line-height: 2.0;
+                /* テキストの高さ調整 */
+            }
+        }
+
+        .symptoms,
+        .options {
+            display: block;
+            /* ボタンを縦並びに */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>エステデモ<br>アンケートフォーム</h1>
+        <div class="info-text">以下全て入力後【アンケート送信】ボタンを押してください。</div>
+        <div class="label">ご来店日(例:西暦記載 ○年○月○日)</div>
+        <textarea id="message" rows="1" placeholder="入力してください" oninput="saveInput('message')"></textarea>
+        <!-- メッセージ入力フィールド -->
+
+        <div class="label">お名前(漢字フルネーム/ふりがな)</div>
+        <textarea id="message2" rows="1" placeholder="入力してください" oninput="saveInput('message2')"></textarea>
+        <!-- メッセージ入力フィールド -->
+
+        <div class="label">生年月日(例:西暦記載 ○年○月○日)</div>
+        <textarea id="message3" rows="1" placeholder="入力してください" oninput="saveInput('message3')"></textarea>
+        <!-- メッセージ入力フィールド -->
+
+        <div class="label">電話番号</div>
+        <textarea id="message4" rows="1" placeholder="入力してください" oninput="saveInput('message4')"></textarea>
+        <!-- メッセージ入力フィールド -->
+
+        <div class="label">お住まい(都道府県/市区町村まで)</div>
+        <textarea id="message5" rows="1" placeholder="入力してください" oninput="saveInput('message5')"></textarea>
+        <!-- メッセージ入力フィールド -->
+
+        <div class="label">ご職業</div>
+        <div class="priority-buttons">
+            <button type="button" id="onepriority" onclick="selectpriority(this)"> 会社員（職業）</button>
+            <button type="button" id="twopriority" onclick="selectpriority(this)">パート・アルバイト（職業）</button>
+            <button type="button" id="threepriority" onclick="selectpriority(this)">学生（職業）</button>
+            <button type="button" id="fourpriority" onclick="selectpriority(this)">専業主婦（職業）</button>
+            <button type="button" id="fivepriority" onclick="selectpriority(this)">その他（職業）</button>
+        </div>
+
+        <div class="label">来店動機</div>
+        <div class="demand-buttons">
+            <button type="button" id="onedemand" onclick="selectdemand(this)">HP（来店動機）</button>
+            <button type="button" id="twodemand" onclick="selectdemand(this)"> Instagram（来店動機）</button>
+            <button type="button" id="threedemand" onclick="selectdemand(this)">Google等での検索（来店動機）</button>
+            <button type="button" id="fourdemand" onclick="selectdemand(this)">ホットペッパービューティー（来店動機）</button>
+            <button type="button" id="fivedemand" onclick="selectdemand(this)">知人の紹介（来店動機）</button>
+            <button type="button" id="sixdemand" onclick="selectdemand(this)">通りすがり（来店動機）</button>
+            <button type="button" id="sevemdemand" onclick="selectdemand(this)">その他（来店動機）</button>
+        </div>
+
+        <div class="label">"知人の紹介"を選択された方は、<br>紹介者のお名前をご記入ください。</div>
+        <textarea id="message7" rows="1" placeholder="自由入力"></textarea> <!-- メッセージ入力フィールド -->
+
+        <div class="label">来店頻度<br>(ネイルサロンにどのくらいの頻度で通っているか)</div>
+        <div class="chance-buttons">
+            <button type="button" id="onechance" onclick="selectchance(this)">2週間に1度(頻度)</button>
+            <button type="button" id="twochance" onclick="selectchance(this)">3週間に1度(頻度)</button>
+            <button type="button" id="threechance" onclick="selectchance(this)">1ヵ月に1度(頻度) </button>
+            <button type="button" id="fourchance" onclick="selectchance(this)">2〜3カ月に1度(頻度)</button>
+        </div>
+
+        <div class="label">過去施術<br>(過去にサロンで受けたことがある施術)</div>
+        <div class="Introduction-buttons">
+            <button type="button" id="oneIntroduction" onclick="selectIntroduction(this)">エステサロンに初めて来た(過去施術)</button>
+            <button type="button" id="twoIntroduction" onclick="selectIntroduction(this)">フェイシャルエステ(過去施術) </button>
+            <button type="button" id="threeIntroduction" onclick="selectIntroduction(this)">ハイドロフェイシャル(過去施術)</button>
+            <button type="button" id="fourIntroduction" onclick="selectIntroduction(this)">小顔リンパマッサージ(過去施術) </button>
+            <button type="button" id="fiveIntroduction" onclick="selectIntroduction(this)">ボディリンパドレナージュ(過去施術) </button>
+            <button type="button" id="sixIntroduction" onclick="selectIntroduction(this)">脱毛(過去施術) </button>
+            <button type="button" id="sevenIntroduction" onclick="selectIntroduction(this)">その他(過去施術) </button>
+        </div>
+
+        <div class="label">薬品でのアレルギー</div>
+        <div class="delivery-buttons">
+            <button type="button" id="onedelivery" onclick="selectdelivery(this)">薬品アレルギー有り</button>
+            <button type="button" id="twodelivery" onclick="selectdelivery(this)">薬品アレルギー無し</button>
+        </div>
+
+        <div class="label">重要項目の同意</div>
+        <div class="info-text">
+            1️⃣ 施術に関する注意事項<br>
+            当サロンの施術はリラクゼーションを目的としており、医療行為ではございません。<br>お肌の状態や体調によっては、施術をお控えいただく場合がございますので、あらかじめご了承ください。<br>持病やアレルギーをお持ちの方は、事前にスタッフへご相談ください
+            🩷。
+            <br><br>2️⃣ 予約・キャンセルポリシー<br>
+            ご予約の変更やキャンセルは、前日までにご連絡をお願いいたします
+            📅📞。<br>当日のキャンセルや無断キャンセルは、キャンセル料が発生する場合がございますので、ご注意ください🙇‍♀️💦<br>皆さまに快適にご利用いただけるよう、ご理解とご協力をお願いいたします。
+        </div>
+        <div class="budgety-buttons">
+            <button type="button" id="onebudgety" onclick="selectbudgety(this)">同意する</button>
+            <button type="button" id="twobudgety" onclick="selectbudgety(this)">同意しない</button>
+        </div>
+
+        <button class="submit-button" onclick="submitForm()">アンケート送信</button> <!-- フォーム送信ボタン -->
+    </div>
+
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script> <!-- LIFF SDKの読み込み -->
+    <script>
+        let priorityCount = '';
+        let demandCount = '';
+        let chanceCount = '';
+        let IntroductionCount = '';
+        let deliveryCount = '';
+        let budgetyCount = '';
+
+        // LIFF初期化
+        document.addEventListener('DOMContentLoaded', function () {
+            liff.init({
+                liffId: '2005254357-zKma9BZk' // ここにあなたのLIFF IDを入力
+            }).then(() => {
+                // LIFF初期化成功時の処理
+                console.log('LIFF初期化成功');
+            }).catch((err) => {
+                // LIFF初期化失敗時の処理
+                console.error('LIFF初期化失敗', err);
+            });
+        });
+
+        // プレースホルダーを非表示にする関数
+        function hidePlaceholder(placeholderId) {
+            document.getElementById(placeholderId).style.display = 'none';
+        }
+
+        // プレースホルダーを表示する関数（入力がない場合）
+        function showPlaceholder(inputId, placeholderId) {
+            const input = document.getElementById(inputId);
+            if (!input.value) {
+                document.getElementById(placeholderId).style.display = 'inline';
+            }
+        }
+
+        // 入力内容をローカルストレージに保存
+        function saveInput(id) {
+            const value = document.getElementById(id).value;
+            localStorage.setItem(id, value);
+        }
+
+        // ページが読み込まれたときに前回の入力内容を復元
+        document.addEventListener('DOMContentLoaded', function () {
+            const savedmessage = localStorage.getItem('message');
+            const savedmessage2 = localStorage.getItem('message2');
+            const savedmessage3 = localStorage.getItem('message3');
+            const savedmessage4 = localStorage.getItem('message4');
+            const savedmessage5 = localStorage.getItem('message5');
+
+            if (savedmessage) document.getElementById('message').value = savedmessage;
+            if (savedmessage2) document.getElementById('message2').value = savedmessage2;
+            if (savedmessage3) document.getElementById('message3').value = savedmessage3;
+            if (savedmessage4) document.getElementById('message4').value = savedmessage4;
+            if (savedmessage5) document.getElementById('message5').value = savedmessage5;
+        });
+
+        function selectpriority(element) {
+            // 単一選択項目の処理コード
+            const buttons = document.querySelectorAll('.priority-buttons button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // 選択されたボタンだけにactiveクラスを追加
+            element.classList.add('active');
+            priorityCount = element.innerText;
+        }
+
+        function selectdemand(element) {
+            // 単一選択項目の処理コード
+            const buttons = document.querySelectorAll('.demand-buttons button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // 選択されたボタンだけにactiveクラスを追加
+            element.classList.add('active');
+            demandCount = element.innerText;
+        }
+
+        function selectchance(element) {
+            // 単一選択項目の処理コード
+            const buttons = document.querySelectorAll('.chance-buttons button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // 選択されたボタンだけにactiveクラスを追加
+            element.classList.add('active');
+            chanceCount = element.innerText;
+        }
+
+        function selectIntroduction(element) {
+            // 単一選択項目の処理コード
+            const buttons = document.querySelectorAll('.Introduction-buttons button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // 選択されたボタンだけにactiveクラスを追加
+            element.classList.add('active');
+            IntroductionCount = element.innerText;
+        }
+
+        function selectdelivery(element) {
+            // 単一選択項目の処理コード
+            const buttons = document.querySelectorAll('.delivery-buttons button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // 選択されたボタンだけにactiveクラスを追加
+            element.classList.add('active');
+            deliveryCount = element.innerText;
+        }
+
+        function selectbudgety(element) {
+            // 単一選択項目の処理コード
+            const buttons = document.querySelectorAll('.budgety-buttons button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // 選択されたボタンだけにactiveクラスを追加
+            element.classList.add('active');
+            budgetyCount = element.innerText;
+        }
+
+        function submitForm() {
+            const message = document.getElementById('message').value;
+            const message2 = document.getElementById('message2').value;
+            const message3 = document.getElementById('message3').value;
+            const message4 = document.getElementById('message4').value;
+            const message5 = document.getElementById('message5').value;
+            const message7 = document.getElementById('message7').value;
+            priorityCount: priorityCount;
+            demandCount: demandCount;
+            chanceCount: chanceCount;
+            IntroductionCount: IntroductionCount;
+            deliveryCount: deliveryCount;
+            budgetyCount: budgetyCount;
+
+            const formData = {
+                message,
+                message2,
+                message3,
+                message4,
+                message5,
+                message7,
+                priorityCount,
+                demandCount,
+                chanceCount,
+                IntroductionCount,
+                deliveryCount,
+                budgetyCount,
+            };
+
+            // 「同意しない」が選択されていたら警告を表示して中止
+            if (budgetyCount === "同意しない") {
+                alert('"同意する"を選択されていない場合、送信することができません');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.message) {
+                alert('ご来店日を入力してください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.message2) {
+                alert('お名前を入力してください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.message3) {
+                alert('生年月日を入力してください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.message4) {
+                alert('電話番号を入力してください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.message5) {
+                alert('お住まいを入力してください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.priorityCount) {
+                alert('ご職業をご選択ください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.demandCount) {
+                alert('来店動機をご選択ください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.chanceCount) {
+                alert('来店頻度をご選択ください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.IntroductionCount) {
+                alert('過去施術をご選択ください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.deliveryCount) {
+                alert('薬品でのアレルギーをご選択ください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.budgetyCount) {
+                alert('重要項目の同意をご選択ください。');
+                return;
+            }
+
+            // LINEトークにメッセージを送信
+            liff.sendMessages([{
+                type: 'text',
+                text: `≪アンケート≫\n【ご来店日】\n・${formData.message}\n\n【お名前】\n・${formData.message2}\n\n【生年月日】\n・${formData.message3}\n\n【電話番号】\n・${formData.message4}\n\n【お住まい】\n・${formData.message5}\n\n【ご職業】\n・${formData.priorityCount}\n\n【来店動機】\n・${formData.demandCount}\n\n【知人の紹介名】\n・${formData.message7}\n\n【来店頻度】\n・${formData.chanceCount}\n\n【過去施術】\n・${formData.IntroductionCount}\n\n【薬品/ネイルでのアレルギー】\n・${formData.deliveryCount}\n\n【重要項目の同意】\n・${formData.budgetyCount}`
+            }]).then(() => {
+                /* メッセージ送信成功時の処理 */
+                alert('ご記入ありがとうございます。同意書が表示されますので、ご確認ください。');
+                /* LIFFウィンドウを閉じる */
+                liff.closeWindow();
+            }).catch((err) => {
+                /* メッセージ送信失敗時の処理 */
+                console.error('メッセージの送信に失敗しました', err);
+            });
+        }
+
+    </script>
+</body>
+
+</html>
